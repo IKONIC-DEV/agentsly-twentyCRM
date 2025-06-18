@@ -13,6 +13,7 @@ import { useRecoilValue } from 'recoil';
 import {
   IconCalendarEvent,
   IconHome,
+  IconLockCustom,
   IconMail,
   IconNotes,
   IconSettings,
@@ -36,6 +37,24 @@ export const useRecordShowContainerTabs = (
     Record<CoreObjectNameSingular, RecordLayout>
   > = useMemo(
     () => ({
+      lead: {
+        tabs: {
+          chats: {
+            title: 'Chat',
+            position: 600,
+            Icon: IconLockCustom,
+            cards: [{ type: 'ChatCard' }],
+            hide: {
+              ifMobile: false,
+              ifDesktop: false,
+              ifInRightDrawer: false,
+              ifFeaturesDisabled: [],
+              ifRequiredObjectsInactive: [],
+              ifRelationsMissing: [],
+            },
+          },
+        },
+      },
       [CoreObjectNameSingular.Note]: {
         tabs: {
           richText: {
