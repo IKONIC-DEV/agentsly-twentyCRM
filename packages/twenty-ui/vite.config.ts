@@ -45,9 +45,15 @@ export default defineConfig(({ command }) => {
     : path.resolve(__dirname, './tsconfig.dev.json');
 
   const checkersConfig: UserPluginConfig = {
-    typescript: {
-      tsconfigPath: tsConfigPath,
-    },
+    // Only enable TypeScript checker in development mode to avoid TS5042 error
+    // TypeScript checking is still handled by the dts plugin during builds
+    ...(isBuildCommand
+      ? {}
+      : {
+          typescript: {
+            tsconfigPath: tsConfigPath,
+          },
+        }),
   };
 
   const dtsConfig: PluginOptions = {
