@@ -2,12 +2,7 @@ name: twenty
 
 services:
   server:
-    build:
-      context: ../../
-      dockerfile: packages/twenty-docker/twenty/Dockerfile
-      args:
-        REACT_APP_SERVER_BASE_URL: ${SERVER_URL}
-        APP_VERSION: ${TAG:-latest}
+    image: twentycrm/twenty:${TAG:-latest}
     volumes:
       - server-local-data:/app/packages/twenty-server/.local-storage
     ports:
@@ -59,12 +54,7 @@ services:
     restart: always
 
   worker:
-    build:
-      context: ../../
-      dockerfile: packages/twenty-docker/twenty/Dockerfile
-      args:
-        REACT_APP_SERVER_BASE_URL: ${SERVER_URL}
-        APP_VERSION: ${TAG:-latest}
+    image: twentycrm/twenty:${TAG:-latest}
     volumes:
       - server-local-data:/app/packages/twenty-server/${STORAGE_LOCAL_PATH:-.local-storage}
     command: ["yarn", "worker:prod"]
