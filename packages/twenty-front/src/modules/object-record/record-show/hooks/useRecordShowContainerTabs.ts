@@ -41,7 +41,7 @@ export const useRecordShowContainerTabs = (
         tabs: {
           chats: {
             title: 'Chat',
-            position: 600,
+            position: 999,
             Icon: IconLockCustom,
             cards: [{ type: 'ChatCard' }],
             hide: {
