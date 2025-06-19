@@ -54,7 +54,7 @@ export const BASE_RECORD_LAYOUT: RecordLayout = {
       },
     },
     notes: {
-      title: 'Notes',
+      title: 'Notessssss',
       Icon: IconNotes,
       position: 400,
       cards: [{ type: CardType.NoteCard }],
