@@ -242,7 +242,7 @@ export const useRecordShowContainerTabs = (
       },
     };
   }, [OBJECT_SPECIFIC_LAYOUTS, targetObjectNameSingular]);
-
+  console.log({ recordLayout });
   return {
     layout: recordLayout,
     tabs: Object.entries(recordLayout.tabs)
