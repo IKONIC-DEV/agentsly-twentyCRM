@@ -96,117 +96,114 @@ const WorkflowRunVisualizer = lazy(() =>
   ),
 );
 
-export const CardComponents: Record<CardType | 'ChatCard', CardComponentType> =
-  {
-    [CardType.TimelineCard]: ({ targetableObject, isInRightDrawer }) => (
-      <TimelineActivities
-        targetableObject={targetableObject}
-        isInRightDrawer={isInRightDrawer}
+export const CardComponents: Record<CardType, CardComponentType> = {
+  [CardType.TimelineCard]: ({ targetableObject, isInRightDrawer }) => (
+    <TimelineActivities
+      targetableObject={targetableObject}
+      isInRightDrawer={isInRightDrawer}
+    />
+  ),
+
+  [CardType.FieldCard]: ({ targetableObject, isInRightDrawer }) => (
+    <StyledGreyBox isInRightDrawer={isInRightDrawer}>
+      <FieldsCard
+        objectNameSingular={targetableObject.targetObjectNameSingular}
+        objectRecordId={targetableObject.id}
       />
-    ),
+    </StyledGreyBox>
+  ),
 
-    [CardType.FieldCard]: ({ targetableObject, isInRightDrawer }) => (
-      <StyledGreyBox isInRightDrawer={isInRightDrawer}>
-        <FieldsCard
-          objectNameSingular={targetableObject.targetObjectNameSingular}
-          objectRecordId={targetableObject.id}
+  [CardType.RichTextCard]: ({ targetableObject }) => (
+    <ShowPageActivityContainer targetableObject={targetableObject} />
+  ),
+
+  [CardType.TaskCard]: ({ targetableObject }) => (
+    <ObjectTasks targetableObject={targetableObject} />
+  ),
+
+  [CardType.NoteCard]: ({ targetableObject }) => (
+    <Notes targetableObject={targetableObject} />
+  ),
+
+  [CardType.FileCard]: ({ targetableObject }) => (
+    <Attachments targetableObject={targetableObject} />
+  ),
+
+  [CardType.EmailCard]: ({ targetableObject }) => (
+    <EmailThreads targetableObject={targetableObject} />
+  ),
+
+  [CardType.CalendarCard]: ({ targetableObject }) => (
+    <Calendar targetableObject={targetableObject} />
+  ),
+
+  [CardType.ChatCard]: ({ targetableObject }) => (
+    <ChatInterface targetableObject={targetableObject} />
+  ),
+
+  [CardType.WorkflowCard]: ({ targetableObject }) => {
+    return (
+      <WorkflowVisualizerComponentInstanceContext.Provider
+        value={{
+          instanceId: getWorkflowVisualizerComponentInstanceId({
+            recordId: targetableObject.id,
+          }),
+        }}
+      >
+        <WorkflowVisualizerEffect workflowId={targetableObject.id} />
+        <Suspense fallback={<LoadingSkeleton />}>
+          <WorkflowVisualizer workflowId={targetableObject.id} />
+        </Suspense>
+      </WorkflowVisualizerComponentInstanceContext.Provider>
+    );
+  },
+
+  [CardType.WorkflowVersionCard]: ({ targetableObject }) => {
+    return (
+      <WorkflowVisualizerComponentInstanceContext.Provider
+        value={{
+          instanceId: getWorkflowVisualizerComponentInstanceId({
+            recordId: targetableObject.id,
+          }),
+        }}
+      >
+        <WorkflowVersionVisualizerEffect
+          workflowVersionId={targetableObject.id}
         />
-      </StyledGreyBox>
-    ),
+        <Suspense fallback={<LoadingSkeleton />}>
+          <WorkflowVersionVisualizer workflowVersionId={targetableObject.id} />
+        </Suspense>
+      </WorkflowVisualizerComponentInstanceContext.Provider>
+    );
+  },
 
-    [CardType.RichTextCard]: ({ targetableObject }) => (
-      <ShowPageActivityContainer targetableObject={targetableObject} />
-    ),
+  [CardType.WorkflowRunCard]: ({ targetableObject }) => {
+    const componentId = useId();
 
-    [CardType.TaskCard]: ({ targetableObject }) => (
-      <ObjectTasks targetableObject={targetableObject} />
-    ),
-
-    [CardType.NoteCard]: ({ targetableObject }) => (
-      <Notes targetableObject={targetableObject} />
-    ),
-
-    [CardType.FileCard]: ({ targetableObject }) => (
-      <Attachments targetableObject={targetableObject} />
-    ),
-
-    [CardType.EmailCard]: ({ targetableObject }) => (
-      <EmailThreads targetableObject={targetableObject} />
-    ),
-
-    [CardType.CalendarCard]: ({ targetableObject }) => (
-      <Calendar targetableObject={targetableObject} />
-    ),
-
-    ChatCard: ({ targetableObject }) => (
-      <ChatInterface targetableObject={targetableObject} />
-    ),
-
-    [CardType.WorkflowCard]: ({ targetableObject }) => {
-      return (
-        <WorkflowVisualizerComponentInstanceContext.Provider
+    return (
+      <WorkflowVisualizerComponentInstanceContext.Provider
+        value={{
+          instanceId: getWorkflowVisualizerComponentInstanceId({
+            recordId: targetableObject.id,
+          }),
+        }}
+      >
+        <WorkflowRunVisualizerComponentInstanceContext.Provider
           value={{
-            instanceId: getWorkflowVisualizerComponentInstanceId({
-              recordId: targetableObject.id,
-            }),
+            instanceId: componentId,
           }}
         >
-          <WorkflowVisualizerEffect workflowId={targetableObject.id} />
-          <Suspense fallback={<LoadingSkeleton />}>
-            <WorkflowVisualizer workflowId={targetableObject.id} />
-          </Suspense>
-        </WorkflowVisualizerComponentInstanceContext.Provider>
-      );
-    },
-
-    [CardType.WorkflowVersionCard]: ({ targetableObject }) => {
-      return (
-        <WorkflowVisualizerComponentInstanceContext.Provider
-          value={{
-            instanceId: getWorkflowVisualizerComponentInstanceId({
-              recordId: targetableObject.id,
-            }),
-          }}
-        >
-          <WorkflowVersionVisualizerEffect
-            workflowVersionId={targetableObject.id}
+          <WorkflowRunVisualizerEffect workflowRunId={targetableObject.id} />
+          <ListenRecordUpdatesEffect
+            objectNameSingular={targetableObject.targetObjectNameSingular}
+            recordId={targetableObject.id}
+            listenedFields={['status', 'output']}
           />
           <Suspense fallback={<LoadingSkeleton />}>
-            <WorkflowVersionVisualizer
-              workflowVersionId={targetableObject.id}
-            />
+            <WorkflowRunVisualizer workflowRunId={targetableObject.id} />
           </Suspense>
-        </WorkflowVisualizerComponentInstanceContext.Provider>
-      );
-    },
-
-    [CardType.WorkflowRunCard]: ({ targetableObject }) => {
-      const componentId = useId();
-
-      return (
-        <WorkflowVisualizerComponentInstanceContext.Provider
-          value={{
-            instanceId: getWorkflowVisualizerComponentInstanceId({
-              recordId: targetableObject.id,
-            }),
-          }}
-        >
-          <WorkflowRunVisualizerComponentInstanceContext.Provider
-            value={{
-              instanceId: componentId,
-            }}
-          >
-            <WorkflowRunVisualizerEffect workflowRunId={targetableObject.id} />
-            <ListenRecordUpdatesEffect
-              objectNameSingular={targetableObject.targetObjectNameSingular}
-              recordId={targetableObject.id}
-              listenedFields={['status', 'output']}
-            />
-            <Suspense fallback={<LoadingSkeleton />}>
-              <WorkflowRunVisualizer workflowRunId={targetableObject.id} />
-            </Suspense>
-          </WorkflowRunVisualizerComponentInstanceContext.Provider>
-        </WorkflowVisualizerComponentInstanceContext.Provider>
-      );
-    },
-  };
+        </WorkflowRunVisualizerComponentInstanceContext.Provider>
+      </WorkflowVisualizerComponentInstanceContext.Provider>
+    );
+  },
+};

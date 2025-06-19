@@ -13,8 +13,8 @@ import { useRecoilValue } from 'recoil';
 import {
   IconCalendarEvent,
   IconHome,
-  IconLockCustom,
   IconMail,
+  IconMessage,
   IconNotes,
   IconSettings,
 } from 'twenty-ui/display';
@@ -23,7 +23,7 @@ import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useRecordShowContainerTabs = (
   loading: boolean,
-  targetObjectNameSingular: CoreObjectNameSingular,
+  targetObjectNameSingular: CoreObjectNameSingular | string,
   isInRightDrawer: boolean,
   objectMetadataItem: ObjectMetadataItem,
 ): { layout: RecordLayout; tabs: SingleTabProps[] } => {
@@ -34,7 +34,7 @@ export const useRecordShowContainerTabs = (
 
   // Object-specific layouts that override or extend the base layout
   const OBJECT_SPECIFIC_LAYOUTS: Partial<
-    Record<CoreObjectNameSingular, RecordLayout>
+    Record<CoreObjectNameSingular | string, RecordLayout>
   > = useMemo(
     () => ({
       lead: {
@@ -42,8 +42,8 @@ export const useRecordShowContainerTabs = (
           chats: {
             title: 'Chat',
             position: 999,
-            Icon: IconLockCustom,
-            cards: [{ type: 'ChatCard' }],
+            Icon: IconMessage,
+            cards: [{ type: CardType.ChatCard }],
             hide: {
               ifMobile: false,
               ifDesktop: false,
@@ -242,7 +242,7 @@ export const useRecordShowContainerTabs = (
       },
     };
   }, [OBJECT_SPECIFIC_LAYOUTS, targetObjectNameSingular]);
-  console.log({ recordLayout });
+
   return {
     layout: recordLayout,
     tabs: Object.entries(recordLayout.tabs)
@@ -260,6 +260,17 @@ export const useRecordShowContainerTabs = (
             Icon,
             cards,
             hide: !(isMobile || isInRightDrawer),
+          };
+        }
+
+        // Special handling for chat tab - always show for lead objects
+        if (key === 'chats' && targetObjectNameSingular === 'lead') {
+          return {
+            id: key,
+            title,
+            Icon,
+            cards,
+            hide: false, // Force visible for lead objects
           };
         }
 

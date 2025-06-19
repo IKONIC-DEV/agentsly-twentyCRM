@@ -44,7 +44,7 @@ export const RecordShowContainer = ({
 
   const { layout, tabs } = useRecordShowContainerTabs(
     loading,
-    objectNameSingular as CoreObjectNameSingular,
+    objectNameSingular as CoreObjectNameSingular | string,
     isInRightDrawer,
     objectMetadataItem,
   );
